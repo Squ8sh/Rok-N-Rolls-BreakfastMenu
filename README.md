@@ -1,18 +1,16 @@
-﻿# Rok-N-Rolls Breakfast Menu
+# Rok-N-Rolls Breakfast Menu
 
-This repository contains a split-stack project with two applications:
-- `backend/` - Laravel 10 app (PHP API + web layer)
-- `frontend/` - React 19 + Vite 8 app (client UI)
+Репозиторий содержит два приложения:
+- `backend/` - Laravel 10 (PHP API + web-слой)
+- `frontend/` - React 19 + Vite 8 (клиентская часть)
 
-At the moment, the repo is a ready-to-extend starter base for future Breakfast Menu features.
+## Технологии
 
-## Tech Stack
+- Бэкенд: PHP 8.1+, Laravel 10, Sanctum
+- Фронтенд: React 19, Vite 8, ESLint
+- База данных: MySQL (по умолчанию в `backend/.env.example`)
 
-- Backend: PHP 8.1+, Laravel 10, Sanctum
-- Frontend: React 19, Vite 8, ESLint
-- Database: MySQL (default in `backend/.env.example`)
-
-## Repository Structure
+## Структура репозитория
 
 ```text
 Rok-N-Rolls-BreakfastMenu/
@@ -22,32 +20,31 @@ Rok-N-Rolls-BreakfastMenu/
 `- README.md
 ```
 
-## Requirements
+## Требования
 
-Install these tools before running locally:
 - PHP >= 8.1
 - Composer
-- Node.js >= 20.19 (recommended: current LTS)
+- Node.js >= 20.19
 - npm
-- MySQL (or another DB driver if you reconfigure Laravel)
+- MySQL (или другой драйвер БД после настройки Laravel)
 
-## Installation
+## Установка
 
-### 1) Clone repository
+### 1) Клонирование репозитория
 
 ```bash
 git clone https://github.com/Squ8sh/Rok-N-Rolls-BreakfastMenu.git
 cd Rok-N-Rolls-BreakfastMenu
 ```
 
-### 2) Setup backend (Laravel)
+### 2) Настройка бэкенда (Laravel)
 
 ```bash
 cd backend
 composer install
 ```
 
-Create `.env` from template:
+Создай `.env` из шаблона:
 
 Linux/macOS:
 ```bash
@@ -59,88 +56,96 @@ Windows PowerShell:
 Copy-Item .env.example .env
 ```
 
-Generate app key and run migrations:
+Сгенерируй ключ приложения и выполни миграции:
 
 ```bash
 php artisan key:generate
 php artisan migrate
 ```
 
-Install backend Vite dependencies:
+Установи зависимости Vite для бэкенда:
 
 ```bash
 npm install
 ```
 
-### 3) Setup frontend (React)
+### 3) Настройка фронтенда (React)
 
 ```bash
 cd ../frontend
 npm install
 ```
 
-## Run in Development
+## Запуск в разработке
 
-Use 2-3 terminals.
+Используй 2-3 терминала.
 
-### Terminal 1: Laravel backend
+### Терминал 1: Laravel бэкенд
 
 ```bash
 cd backend
 php artisan serve
 ```
 
-Default URL: `http://127.0.0.1:8000`
+URL по умолчанию: `http://127.0.0.1:8000`
 
-### Terminal 2: Backend Vite (optional, for Laravel Blade assets)
+### Терминал 2: Vite бэкенд (опционально, для Blade-ассетов Laravel)
 
 ```bash
 cd backend
 npm run dev
 ```
 
-### Terminal 3: React frontend
+### Терминал 3: React фронтенд
 
 ```bash
 cd frontend
 npm run dev
 ```
 
-If `5173` is already used (for example by backend Vite), run frontend on another port:
+Если порт `5173` занят, запусти фронтенд на другом порту:
 
 ```bash
 npm run dev -- --port 5174
 ```
 
-## Available Scripts
+## Связка Фронтенд <-> Бэкенд
 
-### `backend/package.json`
+Фронтенд настроен на вызовы Laravel API через Vite proxy:
 
-- `npm run dev` - start Vite dev server
-- `npm run build` - build production assets
+- запросы фронтенда: `/api/*`
+- прокси-цель: `VITE_BACKEND_URL` (по умолчанию `http://127.0.0.1:8000`)
 
-### `frontend/package.json`
+Настрой переменные фронтенда:
 
-- `npm run dev` - start Vite dev server
-- `npm run build` - build production bundle
-- `npm run lint` - run ESLint
-- `npm run preview` - preview production build locally
+Linux/macOS:
 
-## Current Routes
+```bash
+cd frontend
+cp .env.example .env.local
+```
 
-### Backend Web
+Windows PowerShell:
 
-- `GET /` - default Laravel `welcome` view
+```powershell
+cd frontend
+Copy-Item .env.example .env.local
+```
 
-### Backend API
+Если бэкенд работает на другом хосте/порте, измени `VITE_BACKEND_URL` в `frontend/.env.local`.
 
-- `GET /api/user` - protected by `auth:sanctum`
+## API маршруты
 
-Custom business endpoints are not implemented yet.
+- `GET /api/health` - проверка API
+- `POST /api/auth/register` - регистрация и получение токена
+- `POST /api/auth/login` - вход и получение токена
+- `GET /api/auth/me` - текущий пользователь (нужен токен Bearer)
+- `POST /api/auth/logout` - выход (нужен токен Bearer)
+- `GET /api/user` - стандартный Sanctum маршрут (нужен токен Bearer)
 
-## Important Backend Environment Variables
+## Важные переменные бэкенда
 
-Minimum values for local run (`backend/.env`):
+Минимум для локального запуска (`backend/.env`):
 
 ```env
 APP_NAME=Laravel
@@ -157,33 +162,24 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-After editing `.env`, you can clear config cache:
+После изменения `.env` можно очистить кеш конфигурации:
 
 ```bash
 php artisan config:clear
 ```
 
-## Quality Checks
+## Проверки
 
-Backend tests:
+Тесты бэкенда:
 
 ```bash
 cd backend
 php artisan test
 ```
 
-Frontend lint:
+Проверка lint фронтенда:
 
 ```bash
 cd frontend
 npm run lint
 ```
-
-## Current Project Status
-
-The repo is currently a clean starter foundation:
-- backend and frontend apps are split and configured
-- local development scripts are ready
-- build and lint tooling is in place
-
-Next step is implementing domain logic (models, API endpoints, UI screens, and backend/frontend integration).
